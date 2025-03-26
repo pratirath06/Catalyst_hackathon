@@ -1,4 +1,3 @@
-# sidebar.py code file
 import streamlit as st
 
 def render_sidebar():
@@ -22,8 +21,24 @@ def render_sidebar():
             index=3
         )
 
-        if st.button("Clear Chat"):
-            st.session_state.messages = []
+        # Chat session management
+        st.subheader("Chat Sessions")
+        if st.button("New Chat"):
+            new_chat_id = f"Chat {len(st.session_state.chat_sessions) + 1}"
+            st.session_state.current_chat_id = new_chat_id
+
+        # Display existing chats
+        chat_ids = list(st.session_state.chat_sessions.keys())
+        selected_chat_id = st.selectbox(
+            "Select a chat:",
+            chat_ids if chat_ids else ["No chats yet"],
+            index=chat_ids.index(st.session_state.current_chat_id) if st.session_state.current_chat_id in chat_ids else 0
+        )
+
+        if st.button("Clear Current Chat") and st.session_state.current_chat_id:
+            if st.session_state.current_chat_id in st.session_state.chat_sessions:
+                st.session_state.chat_sessions[st.session_state.current_chat_id]["messages"] = []
+                st.session_state.chat_sessions[st.session_state.current_chat_id]["conversation"].memory.clear()
 
         st.divider()
         st.subheader("Resources")
@@ -55,4 +70,4 @@ def render_sidebar():
             └── requirements.txt
             """)
 
-    return education_level
+    return education_level, selected_chat_id

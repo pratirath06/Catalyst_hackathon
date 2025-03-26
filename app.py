@@ -1,4 +1,3 @@
-# app.py file
 import streamlit as st
 from src.components.sidebar import render_sidebar
 from src.components.chat_interface import render_chat_interface
@@ -7,21 +6,33 @@ from src.models.conversation import get_conversation_chain
 
 # Main app layout
 st.title("EduMentor AI")
-st.write("Welcome! I'm your educational mentor. How can I assist you today?")
+st.write("Welcome! I'm your offline educational mentor. How can I assist you today?")
 
 def main():
-    # Initialize conversation chain
-    conversation = get_conversation_chain()
-    
-    # Initialize chat history
-    if "messages" not in st.session_state:
-        st.session_state.messages = []
+    # Initialize chat sessions in session state
+    if "chat_sessions" not in st.session_state:
+        st.session_state.chat_sessions = {}  # Dictionary: {chat_id: {"conversation": LLMChain, "messages": []}}
+    if "current_chat_id" not in st.session_state:
+        st.session_state.current_chat_id = None
 
-    # Render sidebar
-    education_level = render_sidebar()
+    # Render sidebar and get selected chat ID
+    education_level, selected_chat_id = render_sidebar()
 
-    # Render chat interface
-    render_chat_interface(conversation)
+    # Set or create current chat
+    if selected_chat_id:
+        st.session_state.current_chat_id = selected_chat_id
+        if selected_chat_id not in st.session_state.chat_sessions:
+            st.session_state.chat_sessions[selected_chat_id] = {
+                "conversation": get_conversation_chain(),
+                "messages": []
+            }
+    elif st.session_state.current_chat_id is None and st.session_state.chat_sessions:
+        st.session_state.current_chat_id = list(st.session_state.chat_sessions.keys())[0]
+
+    # Render chat interface for current chat
+    if st.session_state.current_chat_id:
+        current_chat = st.session_state.chat_sessions[st.session_state.current_chat_id]
+        render_chat_interface(current_chat["conversation"], current_chat["messages"])
 
     # Add footer
     st.markdown(
