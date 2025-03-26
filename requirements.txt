@@ -1,7 +1,11 @@
 streamlit
 langchain
 langchain-groq
-google-generativeai
 streamlit-mic-recorder
 python-dotenv
 python-logging
+
+
+
+speechrecognition
+pyaudio
