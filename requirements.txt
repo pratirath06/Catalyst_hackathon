@@ -1,11 +1,5 @@
-streamlit
-langchain
-langchain-groq
-streamlit-mic-recorder
-python-dotenv
-python-logging
-
-
-
-speechrecognition
-pyaudio
+langchain-ollama
+streamlit>=1.44.0
+langchain>=0.3.21
+langchain-community>=0.3.20
+ollama>=0.4.7
