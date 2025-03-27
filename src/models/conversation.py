@@ -20,7 +20,8 @@ logging.basicConfig(
 def get_conversation_chain():
     # Initialize Groq LLM
     #llm = OllamaLLM(model="llama3.1:8b", api_key = "api_key")
-    llm = ChatGroq(api_key= st.secrets["Groq_API"], model_name="llama-3.3-70b-specdec")
+    groq = st.secrets["Groq"]
+    llm = ChatGroq(api_key= groq, model_name="llama-3.3-70b-specdec")
 
     # Initialize memory
     memory = ConversationBufferMemory(
