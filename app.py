@@ -78,7 +78,7 @@ def main():
             st.session_state.messages.append({"role": "assistant", "content": f"Game Result: {result}"})
             st.session_state.game_state["active"] = False
 
-    # Footer
+    # Footer with developer credits
     st.markdown(
         """
         <style>
