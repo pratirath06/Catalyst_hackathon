@@ -2,10 +2,11 @@
 import os
 from langchain_core.prompts import MessagesPlaceholder, ChatPromptTemplate
 from langchain.memory import ConversationBufferMemory
-#from langchain_groq import ChatGroq
-from langchain.chains import LLMChain
+from langchain_groq import ChatGroq
+#from langchain.chains import LLMChain
 import logging
 from langchain_ollama.llms import OllamaLLM
+
 # Setup logging
 LOG_DIR = "logs"
 os.makedirs(LOG_DIR, exist_ok=True)
@@ -18,7 +19,8 @@ logging.basicConfig(
 
 def get_conversation_chain():
     # Initialize Groq LLM
-    llm = OllamaLLM(model="llama3.1:8b", api_key = "api_key")
+    #llm = OllamaLLM(model="llama3.1:8b", api_key = "api_key")
+    llm = ChatGroq(api_key= st.secrets["Groq_API"], model_name="llama-3.3-70b-specdec")
 
     # Initialize memory
     memory = ConversationBufferMemory(
