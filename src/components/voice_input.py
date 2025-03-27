@@ -1,4 +1,3 @@
-# voice_input.py code file
 import streamlit as st
 from streamlit_mic_recorder import speech_to_text
 
@@ -15,7 +14,7 @@ def get_voice_input():
             start_prompt="🎤 Speak",
             stop_prompt="Stop",
             just_once=True,
-            key='voice_input'
+            key="voice_input"  # Fixed key since we only have one chat
         )
 
     return voice_text if voice_text else text_input

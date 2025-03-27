@@ -1,10 +1,14 @@
 import streamlit as st
 
 def render_sidebar():
-    with st.sidebar:
-        st.header("EduMentor AI")
-        st.subheader("Settings")
+    notes_content = None
+    quiz_content = None
+    game_content = None
 
+    with st.sidebar:
+        st.header("EduMentor AI", divider="gray")
+        
+        # Educational Level Dropdown
         education_options = [
             "Class 1-5 (Primary)",
             "Class 6-8 (Middle School)",
@@ -14,60 +18,53 @@ def render_sidebar():
             "Postgraduate",
             "Doctorate"
         ]
-
-        education_level = st.selectbox(
-            "Select your education level:",
-            education_options,
-            index=3
+        educational_level = st.selectbox(
+            "Select your educational level:",
+            options=education_options
+        #    index=education_options.index(st.session_state.educational_level) if st.session_state.educational_level in education_options else 1
         )
 
-        # Chat session management
-        st.subheader("Chat Sessions")
-        if st.button("New Chat"):
-            new_chat_id = f"Chat {len(st.session_state.chat_sessions) + 1}"
-            st.session_state.current_chat_id = new_chat_id
+        # Study Notes
+        st.subheader("Tools", divider="gray")
+        notes_topic = st.text_input("Enter a topic for study notes:")
+        if st.button("Generate Notes") and notes_topic:
+            st.session_state.messages = []  # Clear chat first
+            prompt = f"Provide concise study notes on {notes_topic} (max 200 words)."
+            notes_content = st.session_state.conversation.invoke({"input": prompt})['text']
+            
 
-        # Display existing chats
-        chat_ids = list(st.session_state.chat_sessions.keys())
-        selected_chat_id = st.selectbox(
-            "Select a chat:",
-            chat_ids if chat_ids else ["No chats yet"],
-            index=chat_ids.index(st.session_state.current_chat_id) if st.session_state.current_chat_id in chat_ids else 0
-        )
+        # Quiz Generator
+        quiz_topic = st.text_input("Enter a topic for a quiz:")
+        if st.button("Generate Quiz") and quiz_topic:
+            st.session_state.messages = []  # Clear chat first
+            prompt = f"Generate a 5-question short-answer quiz on {quiz_topic}."
+            quiz_content = st.session_state.conversation.invoke({"input": prompt})['text']
+            
 
-        if st.button("Clear Current Chat") and st.session_state.current_chat_id:
-            if st.session_state.current_chat_id in st.session_state.chat_sessions:
-                st.session_state.chat_sessions[st.session_state.current_chat_id]["messages"] = []
-                st.session_state.chat_sessions[st.session_state.current_chat_id]["conversation"].memory.clear()
+        # Educational Games
+        game_type = st.selectbox("Play a Game:", ["None", "Guess the Word", "Math Challenge"])
+        if st.button("Start Game") and game_type != "None":
+            st.session_state.messages = []  # Clear chat first
+            if game_type == "Guess the Word":
+                prompt = "Provide a word guessing game: give a hint and expect a one-word answer."
+            elif game_type == "Math Challenge":
+                prompt = "Provide a simple math problem with a numerical answer."
+            game_content = {
+                "active": True,
+                "type": game_type,
+                "content": st.session_state.conversation.invoke({"input": prompt})['text'],
+                "user_answer": ""
+            }
+              # Force UI update after clearing
+
+        # Resources
+        #st.divider()
+        #st.subheader("Resources")
+        #st.write("📚 [Learning Materials](https://example.com)")
+        #st.write("📝 [Practice Tests](https://example.com)")
+        #st.write("📊 [Study Planner](https://example.com)")
 
         st.divider()
-        st.subheader("Resources")
-        st.write("📚 [Learning Materials](https://example.com)")
-        st.write("📝 [Practice Tests](https://example.com)")
-        st.write("📊 [Study Planner](https://example.com)")
+        st.write("Developed by Team Catalyst")
 
-        st.divider()
-        st.write("Developed by Tidal Techies")
-
-        if st.checkbox("Show Project Structure"):
-            st.code("""
-            edumentor_ai/
-            ├── .streamlit/
-            │   └── secrets.toml
-            ├── src/
-            │   ├── components/
-            │   │   ├── sidebar.py
-            │   │   ├── voice_input.py
-            │   │   └── chat_interface.py
-            │   ├── utils/
-            │   │   ├── speech_recognition_utils.py
-            │   │   └── groq_utils.py
-            │   └── models/
-            │       └── conversation.py
-            ├── logs/
-            │   └── application.log
-            ├── app.py
-            └── requirements.txt
-            """)
-
-    return education_level, selected_chat_id
+    return notes_content, quiz_content, game_content
