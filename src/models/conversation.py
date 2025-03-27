@@ -3,7 +3,7 @@ import os
 from langchain_core.prompts import MessagesPlaceholder, ChatPromptTemplate
 from langchain.memory import ConversationBufferMemory
 from langchain_groq import ChatGroq
-#from langchain.chains import LLMChain
+from langchain.chains import LLMChain
 import streamlit as st
 import logging
 from langchain_ollama.llms import OllamaLLM
